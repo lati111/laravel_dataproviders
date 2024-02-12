@@ -23,8 +23,7 @@ trait Sortable
     {
         $validator = Validator::make($request->all(), [
             "sort" => "array|nullable",
-            "sort.column" => "string|required",
-            "sort.direction" => "required|in:asc,desc",
+            "sort.*" => "required|in:asc,desc",
         ]);
 
         if ($validator->fails()) {
@@ -37,12 +36,12 @@ trait Sortable
         }
 
         $columnWhitelist = $this->getAllowedSortColumns();
-        foreach ($sortArray as $sortData) {
-            if (in_array($sortData['column'], $columnWhitelist) && !empty($columnWhitelist)) {
+        foreach ($sortArray as $column => $direction) {
+            if (in_array($column, $columnWhitelist) && !empty($columnWhitelist)) {
                 new DataproviderSortException('Sorting in this column is not allowed', 400);
             }
 
-            $builder->orderBy($sortData['column'], $sortData['direction']);
+            $builder->orderBy($column, $direction);
         }
 
         return $builder;
