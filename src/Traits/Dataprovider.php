@@ -5,11 +5,6 @@ namespace Lati111\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Request;
 
-/**
- * @method applyPagination(Request $request, Builder $builder) from Paginatable
- * @method applySearch(Request $request, Builder $builder) from Searchable
- * @method applyFilters(Request $request, Builder $builder) from Filterable
- */
 trait Dataprovider
 {
     protected function getData(Request $request): Builder
@@ -18,14 +13,22 @@ trait Dataprovider
         $builder = $this->getContent($request);
 
         if (in_array(Paginatable::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $builder = $this->applyPagination($request, $builder);
         }
 
         if (in_array(Searchable::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $builder = $this->applySearch($request, $builder);
         }
 
+        if (in_array(Sortable::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $builder = $this->applySorting($request, $builder);
+        }
+
         if (in_array(Filterable::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $builder = $this->applyFilters($request, $builder);
         }
 

@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Lati111\Exceptions\DataproviderPaginationException;
 
-/**
- * @method getData(Request $request) from Dataprovider
- */
 trait Paginatable
 {
     private int $defaultPerPage = 10;
@@ -35,6 +32,7 @@ trait Paginatable
 
     protected function getCount(Request $request): float
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $count = $this->getData($request)->count();
         $perpage = $request->get('perpage', $this->defaultPerPage);
 
