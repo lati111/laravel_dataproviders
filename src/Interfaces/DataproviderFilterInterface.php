@@ -4,7 +4,7 @@ namespace Lati111\LaravelDataproviders;
 
 use Illuminate\Database\Eloquent\Builder;
 
-interface DataproviderInterface {
+interface DataproviderFilterInterface {
 
     /**
      * Apply the filter to a query
