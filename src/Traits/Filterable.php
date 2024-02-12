@@ -8,8 +8,17 @@ use Illuminate\Support\Facades\Validator;
 use Lati111\Exceptions\DataproviderFilterException;
 use Lati111\Exceptions\DataproviderSearchException;
 
+/**
+ * Dataproviders with this trait are filterable. Requires Dataprovider trait to be present.
+ */
 trait Filterable
 {
+    /**
+     * Apply dataprovider filters to a query
+     * @param Request $request The request parameters as passed by Laravel
+     * @param Builder $builder The query to be modified
+     * @return Builder The modified query
+     */
     protected function applyFilters(Request $request, Builder $builder): Builder
     {
         if ($request->get('filters', '[]') === '[]') {
@@ -43,7 +52,12 @@ trait Filterable
         return $builder;
     }
 
-    public function getFilterData(Request $request)
+    /**
+     * Gets the data for a filter. If no filter is specified, returs a list of all filters
+     * @param Request $request The request parameters as passed by Laravel
+     * @return array Returns a list of filters, or the specific data of a filter
+     */
+    public function getFilterData(Request $request): array
     {
         $validator = Validator::make($request->all(), [
             'filter' => 'nullable|string',
@@ -69,5 +83,9 @@ trait Filterable
         return $filters[$request->get('filter')]->getJson();
     }
 
+    /**
+     * Gets a list of all available filters
+     * @return array Returns an array of available filters
+     */
     abstract protected function getFilterList(): array;
 }

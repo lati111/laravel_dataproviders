@@ -5,8 +5,16 @@ namespace Lati111\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Request;
 
+/**
+ * The base trait for operating a dataprovider
+ */
 trait Dataprovider
 {
+    /**
+     * Get the dataprovider content with the selected dataprovider traits applied
+     * @param Request $request The request parameters as passed by Laravel
+     * @return Builder The newly created query
+     */
     protected function getData(Request $request): Builder
     {
         $traits = class_uses(self::class);
@@ -35,5 +43,10 @@ trait Dataprovider
         return $builder;
     }
 
+    /**
+     * Gets the content query before it is modified further
+     * @param Request $request The request parameters as passed by Laravel
+     * @return Builder The newly created query
+     */
     abstract protected function getContent(Request $request): Builder;
 }
