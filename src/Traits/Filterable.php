@@ -2,7 +2,7 @@
 
 namespace Lati111\Traits;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Lati111\Exceptions\DataproviderFilterException;

@@ -3,7 +3,7 @@
 namespace Lati111\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 /**
  * The base trait for operating a dataprovider
