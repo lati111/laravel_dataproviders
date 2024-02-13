@@ -1,6 +1,6 @@
 <?php
 
-namespace Lati111\LaravelDataproviders;
+namespace Lati111\LaravelDataproviders\Interfaces;
 
 use Illuminate\Database\Eloquent\Builder;
 

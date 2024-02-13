@@ -1,12 +1,12 @@
 <?php
 
-namespace Lati111\Traits;
+namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use Lati111\Exceptions\DataproviderSearchException;
-use Lati111\Exceptions\DataproviderSortException;
+use Lati111\LaravelDataproviders\Exceptions\DataproviderSearchException;
+use Lati111\LaravelDataproviders\Exceptions\DataproviderSortException;
 
 /**
  * Dataproviders with this trait are sortable. Requires Dataprovider trait to be present.

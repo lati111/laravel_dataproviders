@@ -1,6 +1,6 @@
 <?php
 
-namespace Lati111\Exceptions;
+namespace Lati111\LaravelDataproviders\Exceptions;
 
 class DataproviderException extends \Exception
 {

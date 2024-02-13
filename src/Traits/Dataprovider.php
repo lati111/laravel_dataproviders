@@ -1,6 +1,6 @@
 <?php
 
-namespace Lati111\Traits;
+namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

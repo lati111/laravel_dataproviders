@@ -1,11 +1,11 @@
 <?php
 
-namespace Lati111\Traits;
+namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use Lati111\Exceptions\DataproviderPaginationException;
+use Lati111\LaravelDataproviders\Exceptions\DataproviderPaginationException;
 
 /**
  * Dataproviders with this trait are split into seperate pages and is paginatable. Requires Dataprovider trait to be present.

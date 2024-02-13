@@ -1,12 +1,12 @@
 <?php
 
-namespace Lati111\Traits;
+namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use Lati111\Exceptions\DataproviderFilterException;
-use Lati111\Exceptions\DataproviderSearchException;
+use Lati111\LaravelDataproviders\Exceptions\DataproviderFilterException;
+use Lati111\LaravelDataproviders\Exceptions\DataproviderSearchException;
 
 /**
  * Dataproviders with this trait are filterable. Requires Dataprovider trait to be present.
