@@ -21,22 +21,21 @@ trait Sortable
      */
     protected function ApplySorting(Request $request, Builder $builder): Builder
     {
-        $validator = Validator::make($request->all(), [
-            "sort" => "array|nullable",
-            "sort.*" => "required|in:asc,desc",
+        if ($request->get('sort') === null) {
+            return $builder;
+        }
+
+        $sortData = json_decode($request->get('sort'), true);
+        $validator = Validator::make($sortData, [
+            ".*" => "required|in:asc,desc",
         ]);
 
         if ($validator->fails()) {
             new DataproviderSortException($validator->errors()->first(), 400);
         }
 
-        $sortArray = $request->get('sort');
-        if ($sortArray === null) {
-            return $builder;
-        }
-
         $columnWhitelist = $this->getAllowedSortColumns();
-        foreach ($sortArray as $column => $direction) {
+        foreach ($sortData as $column => $direction) {
             if (in_array($column, $columnWhitelist) && !empty($columnWhitelist)) {
                 new DataproviderSortException('Sorting in this column is not allowed', 400);
             }
