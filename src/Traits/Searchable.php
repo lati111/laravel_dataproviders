@@ -12,6 +12,10 @@ use Lati111\LaravelDataproviders\Exceptions\DataproviderSearchException;
  */
 trait Searchable
 {
+    /** @var bool Whether searching for an aliased column should be allowed. Is slower when enabled */
+    protected bool $aliasSearch = false;
+
+
     /**
      * Apply dataprovider searching to a query
      * @param Request $request The request parameters as passed by Laravel
@@ -34,11 +38,20 @@ trait Searchable
             return $builder;
         }
 
-        $builder->where(function($query) use ($searchfields, $searchterm) {
-            foreach($searchfields as $searchfield) {
-                $query->orWhere($searchfield, "LIKE", '%'.$searchterm.'%');
-            }
-        });
+        if ($this->aliasSearch === true) {
+            $builder->having(function($query) use ($searchfields, $searchterm) {
+                foreach($searchfields as $searchfield) {
+                    $query->orHaving($searchfield, "LIKE", '%'.$searchterm.'%');
+                }
+            });
+        } else {
+            $builder->where(function($query) use ($searchfields, $searchterm) {
+                foreach($searchfields as $searchfield) {
+                    $query->orWhere($searchfield, "LIKE", '%'.$searchterm.'%');
+                }
+            });
+        }
+
 
         return $builder;
     }
@@ -48,4 +61,14 @@ trait Searchable
      * @return array List of searchable fields
      */
     abstract function getSearchFields(): array;
+
+    /**
+     * Set whether searching in an alias column should be allowed. Search is slower when enabled.
+     * @param bool $aliasSearch Whether it is allowed or not
+     * @return void
+     */
+    public function setAliasSearch(bool $aliasSearch): void
+    {
+        $this->aliasSearch = $aliasSearch;
+    }
 }

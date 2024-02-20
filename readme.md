@@ -89,6 +89,9 @@ class Datatable extends Controller
 
     // Method to be called from a route
     public function data(Request $request) {
+        // Slows down searches but allows the dataprovider to search on aliased column defined in search fields.
+        $this->setAliasSearch(true);
+    
         // Get the data from the dataprovider trait.
         $data = $this->getData($request);
 
