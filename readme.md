@@ -1,15 +1,16 @@
 # Laravel dataproviders
 Adds a base for easy dataprovider manipulation to Laravel. Dataproviders are the API side of a data table, allowing you to search, split by page, sort or filter a model which can then be loaded into a client side table. We recommend user our [TypeScript receiver scripts](https://github.com/lati111/laravel_datatables) for this, but you can also build your own.
 
-## Contents
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Basic](#usage)
-  - [Pagination](#paginatable)
-  - [Searching](#searchable)
-  - [Sorting](#sortable)
-  - [Filters](#filterable)
-- [Requirements](#requirements)
+<!-- TOC -->
+* [Laravel dataproviders](#laravel-dataproviders)
+  * [Installation](#installation)
+  * [Usage](#usage)
+    * [Paginatable](#paginatable)
+    * [Searchable](#searchable)
+    * [Sortable](#sortable)
+    * [Filterable](#filterable)
+  * [Requirements](#requirements)
+<!-- TOC -->
 
 ## Installation
 ```
@@ -76,6 +77,15 @@ You can pass the `page` and `perpage` variables along the request. Page indicate
   "perpage": 10
 }
 ```
+
+Alternatively, you may use `offset` instead of `page` if you want to handle pagination manually, such as in the case of a scroll to load item. 
+```json
+{
+  "offset": 12,
+  "perpage": 8
+}
+```
+
 
 ### Searchable
 A dataprovider can be made to be searchable, allowing the user to search the dataprovider for certain values. To make a dataprovider paginatable, you can do the following:

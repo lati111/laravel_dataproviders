@@ -25,7 +25,8 @@ trait Paginatable
     {
         $validator = Validator::make($request->all(), [
             "page" => "integer|nullable",
-            "perpage" => "integer|nullable"
+            "perpage" => "integer|nullable",
+            "offset" => "integer|nullable"
         ]);
 
         if ($validator->fails()) {
@@ -34,9 +35,13 @@ trait Paginatable
 
         $page = $request->get('page', 1);
         $perpage = $request->get('perpage', $this->defaultPerPage);
+        $offset = ($page - 1) * $perpage;
+        if ($request->get('offset') !== null && $request->get('page') === null) {
+            $offset = $request->get('offset');
+        }
 
         return $builder
-            ->offset(($page - 1) * $perpage)
+            ->offset($offset)
             ->take($perpage);
     }
 
