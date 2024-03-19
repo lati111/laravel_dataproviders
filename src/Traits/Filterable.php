@@ -46,7 +46,7 @@ trait Filterable
                 ), 400);
             }
 
-            $filterlist[$filterdata['filter']]->handle($builder, $filterdata['operator'], $filterdata['value']);
+            $filterlist[$filterdata['filter']]->handle($builder, $filterdata['operator'], $filterdata['value'] ?? '');
         }
 
         return $builder;
