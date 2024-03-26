@@ -53,7 +53,7 @@ trait Paginatable
     protected function getPages(Request $request): float
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $count = $this->getData($request)->count();
+        $count = $this->getData($request, true)->count();
         $perpage = $request->get('perpage', $this->defaultPerPage);
 
         $pages = $count / $perpage;

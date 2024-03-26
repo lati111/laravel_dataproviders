@@ -15,12 +15,12 @@ trait Dataprovider
      * @param Request $request The request parameters as passed by Laravel
      * @return Builder The newly created query
      */
-    protected function getData(Request $request): Builder
+    protected function getData(Request $request, bool $skipPagination): Builder
     {
         $traits = class_uses(self::class);
         $builder = $this->getContent($request);
 
-        if (in_array(Paginatable::class, $traits)) {
+        if (in_array(Paginatable::class, $traits) && $skipPagination === false) {
             /** @noinspection PhpUndefinedMethodInspection */
             $builder = $this->applyPagination($request, $builder);
         }
