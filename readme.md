@@ -137,6 +137,11 @@ class Datatable extends Controller
     use Dataprovider;
     // Use the paginatable trait to indicate that this dataprovider should be paginatable
     use Sortable;
+    
+    function __construct() {
+        //when using an aliased column, you can set it in the column aliases array to replace any sorting of `time_since_order` with `created_at`
+        $this->columnAliases = ['time_since_order' => 'created_at']
+    }
 
     // Method to be called from a route
     public function data(Request $request) {

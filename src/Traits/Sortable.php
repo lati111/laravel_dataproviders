@@ -13,6 +13,8 @@ use Lati111\LaravelDataproviders\Exceptions\DataproviderSortException;
  */
 trait Sortable
 {
+    public array $columnAliases = [];
+
     /**
      * Apply dataprovider sorting to a query
      * @param Request $request The request parameters as passed by Laravel
@@ -34,8 +36,13 @@ trait Sortable
             new DataproviderSortException($validator->errors()->first(), 400);
         }
 
+        $columnAliases = $this->columnAliases;
         $columnWhitelist = $this->getAllowedSortColumns();
         foreach ($sortData as $column => $direction) {
+            if (isset($columnAliases[$column])) {
+                $column = $columnAliases[$column];
+            }
+
             if (in_array($column, $columnWhitelist) && !empty($columnWhitelist)) {
                 new DataproviderSortException('Sorting in this column is not allowed', 400);
             }
