@@ -69,7 +69,7 @@ trait Filterable
 
         $filters = $this->getFilterList();
         if ($request->get('filter') === null) {
-            return $filters;
+            return array_keys($filters);
         }
 
         if (isset($filters[$request->get('filter')]) === false) {
