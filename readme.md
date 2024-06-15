@@ -247,13 +247,13 @@ class CustomerFilter implements DataproviderFilterInterface
 You can pass the a json array of filters along through the request variables under the key 'sort'. The array should be as follows
 ```json
 {
-  "filters": {
-    "customer": {
+  "filters": [
+    {
       "filter": "customer",
       "operator": "!=",
       "value": "34"
     }
-  }
+  ]
 }
 ```
 

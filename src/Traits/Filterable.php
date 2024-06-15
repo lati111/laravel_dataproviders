@@ -80,7 +80,7 @@ trait Filterable
             ), 400);
         }
 
-        return $filters[$request->get('filter')]->getJson();
+        return $filters[$request->get('filter')]->getInfo();
     }
 
     /**
