@@ -49,11 +49,11 @@ abstract class AbstractFilter implements DataproviderFilterInterface
      * Apply the filter to a query
      * @param Builder $builder The query to be modified
      * @param string $operator The operator used in the filter
-     * @param string $value The value to filter on
+     * @param mixed $value The value to filter on
      * @return Builder The modified query
      * @throws DataproviderException When operator does not exist
      */
-    public function handle(Builder $builder, string $operator, string $value): Builder
+    public function handle(Builder $builder, string $operator, mixed $value): Builder
     {
         if ($this->validateOperator($operator) === false) {
             throw new DataproviderException(sprintf('Operator %s does not exist on filter %s', $operator, self::class));

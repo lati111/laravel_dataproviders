@@ -21,7 +21,7 @@ class NullFilter extends AbstractFilter
         ];
     }
     /** {@inheritdoc} */
-    public function handle(Builder $builder, string $operator, string|null $value = null): Builder {
+    public function handle(Builder $builder, string $operator, mixed $value = null): Builder {
         return parent::handle($builder, $operator, null);
     }
 
