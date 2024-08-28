@@ -13,12 +13,14 @@ trait Dataprovider
     /**
      * Get the dataprovider content with the selected dataprovider traits applied
      * @param Request $request The request parameters as passed by Laravel
+     * @param boolean $skipPagination Whether or not to skip applying pagination variables (for getting a page count)
+     * @param boolean $dataQuery Whether or not this is the data query, or a pagination or filter query
      * @return Builder The newly created query
      */
-    protected function getData(Request $request, bool $skipPagination = false): Builder
+    protected function getData(Request $request, bool $skipPagination = false, bool $dataQuery = true): Builder
     {
         $traits = class_uses(self::class);
-        $builder = $this->getContent($request);
+        $builder = $this->getContent($request, $dataQuery);
 
         if (in_array(Paginatable::class, $traits) && $skipPagination === false) {
             /** @noinspection PhpUndefinedMethodInspection */
@@ -46,7 +48,8 @@ trait Dataprovider
     /**
      * Gets the content query before it is modified further
      * @param Request $request The request parameters as passed by Laravel
+     * @param boolean $dataQuery Whether or not this is the data query, or a pagination or filter query
      * @return Builder The newly created query
      */
-    abstract protected function getContent(Request $request): Builder;
+    abstract protected function getContent(Request $request, bool $dataQuery = true): Builder;
 }
