@@ -57,6 +57,10 @@ trait Searchable
         } else {
             $builder->where(function($query) use ($searchfields, $searchterm) {
                 foreach($searchfields as $searchfield) {
+                    if (isset($this->searchAliases[$searchfield])) {
+                        $searchfield = $this->searchAliases[$searchfield];
+                    }
+                    
                     $query->orWhere($searchfield, "LIKE", '%'.$searchterm.'%');
                 }
             });
