@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
  */
 trait Dataprovider
 {
+    /** @var array An array containing custom columns used in selection */
+    protected array $customColumns = [];
+
     /**
      * Get the dataprovider content with the selected dataprovider traits applied
      * @param Request $request The request parameters as passed by Laravel
@@ -20,29 +23,52 @@ trait Dataprovider
     protected function getData(Request $request, bool $skipPagination = false, bool $dataQuery = true): Builder
     {
         $traits = class_uses(self::class);
-        $builder = $this->getContent($request, $dataQuery);
+        $query = $this->getContent($request, $dataQuery);
+        if ($dataQuery === true) {
+            $query = $this->applyCustomColumnSelects($query);
+        }
 
         if (in_array(Paginatable::class, $traits) && $skipPagination === false) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $builder = $this->applyPagination($request, $builder);
+            $query = $this->applyPagination($request, $query);
         }
 
         if (in_array(Searchable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $builder = $this->applySearch($request, $builder);
+            $query = $this->applySearch($request, $query);
         }
 
         if (in_array(Sortable::class, $traits) && $dataQuery === true) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $builder = $this->applySorting($request, $builder);
+            $query = $this->applySorting($request, $query);
         }
 
         if (in_array(Filterable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $builder = $this->applyFilters($request, $builder);
+            $query = $this->applyFilters($request, $query);
         }
 
-        return $builder;
+        return $query;
+    }
+
+    /**
+     * Applies the custom columns selects to the query
+     */
+    protected function applyCustomColumnSelects(Builder $query): Builder {
+        foreach ($this->customColumns as $alias => $sql) {
+            $query->selectRaw(sprintf('(%s) as %s', $sql, $alias));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Add a custom column based on raw sql
+     * @param string $alias The alias used to identify the column
+     * @param string $sql The raw sql used to create the column
+     */
+    protected function addCustomColumn(string $alias, string $sql): void {
+        $this->customColumns[$alias] = $sql;
     }
 
     /**

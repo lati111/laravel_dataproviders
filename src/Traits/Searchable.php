@@ -15,6 +15,8 @@ trait Searchable
     /** @var bool Whether searching for an aliased column should be allowed. Is slower when enabled */
     protected bool $aliasSearch = false;
 
+    /** @var array An array containing the aliased columns for searching */
+    public array $searchAliases = [];
 
     /**
      * Apply dataprovider searching to a query
@@ -22,7 +24,7 @@ trait Searchable
      * @param Builder $builder The query to be modified
      * @return Builder The modified query
      */
-    protected function applySearch(Request $request, Builder $builder,): Builder
+    protected function applySearch(Request $request, Builder $builder): Builder
     {
         $validator = Validator::make($request->all(), [
             "search" => "string|nullable"
@@ -38,9 +40,17 @@ trait Searchable
             return $builder;
         }
 
+        //apply query
         if ($this->aliasSearch === true) {
             $builder->having(function($query) use ($searchfields, $searchterm) {
                 foreach($searchfields as $searchfield) {
+                    //set custom column or column alias
+                    if (isset($this->customColumns[$searchfield])) {
+                        $searchfield = sprintf('(%)', $this->customColumns[$searchfield]);
+                    } else if (isset($this->searchAliases[$searchfield])) {
+                        $searchfield = $this->searchAliases[$searchfield];
+                    }
+
                     $query->orHaving($searchfield, "LIKE", '%'.$searchterm.'%');
                 }
             });
@@ -51,7 +61,6 @@ trait Searchable
                 }
             });
         }
-
 
         return $builder;
     }
