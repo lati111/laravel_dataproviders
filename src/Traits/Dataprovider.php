@@ -32,7 +32,7 @@ trait Dataprovider
             $builder = $this->applySearch($request, $builder);
         }
 
-        if (in_array(Sortable::class, $traits)) {
+        if (in_array(Sortable::class, $traits) && $dataQuery === true) {
             /** @noinspection PhpUndefinedMethodInspection */
             $builder = $this->applySorting($request, $builder);
         }
