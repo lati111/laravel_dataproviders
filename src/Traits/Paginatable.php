@@ -4,6 +4,7 @@ namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Lati111\LaravelDataproviders\Exceptions\DataproviderPaginationException;
 
@@ -12,17 +13,64 @@ use Lati111\LaravelDataproviders\Exceptions\DataproviderPaginationException;
  */
 trait Paginatable
 {
+    /** @var int The requested page */
+    protected int $page = 1;
+
+    /** @var int The requested offset */
+    protected int $offset = 0;
+
+    /** @var int The requested amount of items per page */
+    protected int $perPage = 10;
+
     /** @var int The amount of items per page if no amount was specified */
     private int $defaultPerPage = 10;
 
     /**
      * Apply dataprovider pagination to a query
      * @param Request $request The request parameters as passed by Laravel
-     * @param Builder $builder The query to be modified
+     * @param Builder $query The query to be modified
      * @return Builder The modified query
+     * @throws DataproviderPaginationException
      */
-    protected function applyPagination(Request $request, Builder $builder): Builder
+    protected function applyPaginationToQuery(Request $request, Builder $query): Builder
     {
+        $this->loadPaginationDetails($request);
+
+        if ($request->get('offset') === null && $request->get('page') === null) {
+            return $query;
+        }
+
+        return $query
+            ->offset($offset ?? 0)
+            ->take($perpage ?? 10);
+    }
+
+    /**
+     * Apply dataprovider pagination to a collection
+     * @param Request $request The request parameters as passed by Laravel
+     * @param Collection $query The query to be modified
+     * @return Collection The modified collection
+     * @throws DataproviderPaginationException
+     */
+    protected function applyPaginationToCollection(Request $request, Collection $query): Collection
+    {
+        $this->loadPaginationDetails($request);
+
+        if ($request->get('offset') === null && $request->get('page') === null) {
+            return $query;
+        }
+
+        return $query
+            ->skip($this->offset ?? 0)
+            ->take($this->perPage ?? 10);
+    }
+
+    /**
+     * Get the pagination details from
+     * @param Request $request The request parameters as passed by Laravel
+     * @throws DataproviderPaginationException
+     */
+    private function loadPaginationDetails(Request $request) {
         $validator = Validator::make($request->all(), [
             "page" => "integer|nullable",
             "perpage" => "integer|nullable",
@@ -33,16 +81,12 @@ trait Paginatable
             new DataproviderPaginationException($validator->errors()->first(), 400);
         }
 
-        $page = $request->get('page', 1);
-        $perpage = $request->get('perpage', $this->defaultPerPage);
-        $offset = ($page - 1) * $perpage;
+        $this->page = $request->get('page', 1);
+        $this->perPage = $request->get('perpage', $this->defaultPerPage);
+        $this->offset = ($this->page - 1) * $this->perPage;
         if ($request->get('offset') !== null && $request->get('page') === null) {
-            $offset = $request->get('offset');
+            $this->offset = $request->get('offset');
         }
-
-        return $builder
-            ->offset($offset)
-            ->take($perpage);
     }
 
     /**

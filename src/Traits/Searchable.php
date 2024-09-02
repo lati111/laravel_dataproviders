@@ -4,6 +4,7 @@ namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Lati111\LaravelDataproviders\Exceptions\DataproviderSearchException;
 
@@ -21,10 +22,10 @@ trait Searchable
     /**
      * Apply dataprovider searching to a query
      * @param Request $request The request parameters as passed by Laravel
-     * @param Builder $builder The query to be modified
-     * @return Builder The modified query
+     * @param Builder|Collection $query The query to be modified
+     * @return Builder|Collection The modified query
      */
-    protected function applySearch(Request $request, Builder $builder): Builder
+    protected function applySearch(Request $request, Builder|Collection $query): Builder|Collection
     {
         $validator = Validator::make($request->all(), [
             "search" => "string|nullable"
@@ -37,10 +38,24 @@ trait Searchable
         $searchfields = $this->getSearchFields();
         $searchterm = $request->get("search");
         if ($searchterm === null) {
-            return $builder;
+            return $query;
         }
 
-        //apply query
+        if ($query instanceof Builder) {
+            return $this->applySearchToQuery($query, $searchterm, $searchfields);
+        } else if ($query instanceof Collection) {
+            return $this->applySearchToCollection($query, $searchterm, $searchfields);
+        }
+    }
+
+    /**
+     * Apply the search parameters to a query
+     * @param Builder $builder The query to modify
+     * @param string $needle The term to search for in the given fields
+     * @param array $searchFields The columns to search on
+     * @return Builder The modified query
+     */
+    private function applySearchToQuery(Builder $builder, string $needle, array $searchFields): Builder {
         if ($this->aliasSearch === true) {
             $builder->having(function($query) use ($searchfields, $searchterm) {
                 foreach($searchfields as $searchfield) {
@@ -60,13 +75,37 @@ trait Searchable
                     if (isset($this->searchAliases[$searchfield])) {
                         $searchfield = $this->searchAliases[$searchfield];
                     }
-                    
+
                     $query->orWhere($searchfield, "LIKE", '%'.$searchterm.'%');
                 }
             });
         }
 
         return $builder;
+    }
+
+    /**
+     * Apply the search parameters to a collection
+     * @param Collection $query The collection to modify
+     * @param string $needle The term to search for in the given fields
+     * @param array $searchFields The columns to search on
+     * @return Collection The modified collection
+     */
+    private function applySearchToCollection(Collection $query, string $needle, ?array $searchFields): Collection {
+        return $query->filter(function(array|string $data) use ($needle, $searchFields) {
+            if (is_string($data)) {
+                return str_contains(trim(strtolower($data)), trim(strtolower($needle)));
+            }
+
+            $foundMatch = false;
+            foreach ($data as $item) {
+                if (str_contains(trim(strtolower($item)), trim(strtolower($needle)))) {
+                    $foundMatch;
+                }
+            }
+
+            return $foundMatch;
+        });
     }
 
     /**

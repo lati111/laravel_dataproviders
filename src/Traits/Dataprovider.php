@@ -4,6 +4,7 @@ namespace Lati111\LaravelDataproviders\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 /**
  * The base trait for operating a dataprovider
@@ -20,35 +21,58 @@ trait Dataprovider
      * @param boolean $dataQuery Whether or not this is the data query, or a pagination or filter query
      * @return Builder The newly created query
      */
-    protected function getData(Request $request, bool $skipPagination = false, bool $dataQuery = true): Builder
+    protected function getData(Request $request, bool $skipPagination = false, bool $dataQuery = true): Builder|Collection
     {
         $traits = class_uses(self::class);
         $query = $this->getContent($request, $dataQuery);
-        if ($dataQuery === true) {
+
+        // Apply custom sql select statements to a query
+        if ($query instanceof Builder && $dataQuery === true) {
             $query = $this->applyCustomColumnSelects($query);
         }
 
-        if (in_array(Paginatable::class, $traits) && $skipPagination === false) {
+        // Apply pagination to a query
+        if ($query instanceof Builder && in_array(Paginatable::class, $traits) && $skipPagination === false) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $query = $this->applyPagination($request, $query);
+            $query = $this->applyPaginationToQuery($request, $query);
         }
 
+        // Apply a search to a query or collection
         if (in_array(Searchable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
             $query = $this->applySearch($request, $query);
         }
 
-        if (in_array(Sortable::class, $traits) && $dataQuery === true) {
+        // Apply the sorting to a query
+        if ($query instanceof Builder && in_array(Sortable::class, $traits) && $dataQuery === true) {
             /** @noinspection PhpUndefinedMethodInspection */
             $query = $this->applySorting($request, $query);
         }
 
-        if (in_array(Filterable::class, $traits)) {
+        // Apply the filters to a query
+        if ($query instanceof Builder && in_array(Filterable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
             $query = $this->applyFilters($request, $query);
         }
 
         return $query;
+    }
+
+    /**
+     * @param Request $request The request parameters as passed by Laravel
+     * @param Collection $query The collection to collect data from
+     * @return Collection The collected data
+     * @throws DataproviderPaginationException
+     */
+    protected function getDataFromCollection(Request $request, Collection $query): Collection {
+        $traits = class_uses(self::class);
+
+        if (in_array(Paginatable::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $query = $this->applyPaginationToCollection($request, $query);
+        }
+
+        return $query->flatten();
     }
 
     /**
@@ -77,5 +101,5 @@ trait Dataprovider
      * @param boolean $dataQuery Whether or not this is the data query, or a pagination or filter query
      * @return Builder The newly created query
      */
-    abstract protected function getContent(Request $request, bool $dataQuery = true): Builder;
+    abstract protected function getContent(Request $request, bool $dataQuery = true): Builder|Collection;
 }
