@@ -55,28 +55,32 @@ trait Searchable
      * @param array $searchFields The columns to search on
      * @return Builder The modified query
      */
-    private function applySearchToQuery(Builder $builder, string $needle, array $searchFields): Builder {
+    private function applySearchToQuery(Builder $builder, string $needle, array $searchfields): Builder {
         if ($this->aliasSearch === true) {
-            $builder->having(function($query) use ($searchfields, $searchterm) {
+            $builder->having(function($query) use ($searchfields, $needle) {
                 foreach($searchfields as $searchfield) {
                     //set custom column or column alias
                     if (isset($this->customColumns[$searchfield])) {
-                        $searchfield = sprintf('(%)', $this->customColumns[$searchfield]);
+                        $searchfield = sprintf('(%s)', $this->customColumns[$searchfield]);
                     } else if (isset($this->searchAliases[$searchfield])) {
                         $searchfield = $this->searchAliases[$searchfield];
                     }
 
-                    $query->orHaving($searchfield, "LIKE", '%'.$searchterm.'%');
+                    $condition = sprintf("%s LIKE '%%%s%%'", $searchfield, $needle);
+                    $query->orHavingRaw($condition);
                 }
             });
         } else {
-            $builder->where(function($query) use ($searchfields, $searchterm) {
+            $builder->where(function($query) use ($searchfields, $needle) {
                 foreach($searchfields as $searchfield) {
-                    if (isset($this->searchAliases[$searchfield])) {
+                    if (isset($this->customColumns[$searchfield])) {
+                        $searchfield = sprintf('(%s)', $this->customColumns[$searchfield]);
+                    } else if (isset($this->searchAliases[$searchfield])) {
                         $searchfield = $this->searchAliases[$searchfield];
                     }
 
-                    $query->orWhere($searchfield, "LIKE", '%'.$searchterm.'%');
+                    $condition = sprintf("%s LIKE '%%%s%%'", $searchfield, $needle);
+                    $query->orWhereRaw($condition);
                 }
             });
         }
