@@ -102,9 +102,15 @@ trait Searchable
             }
 
             $foundMatch = false;
-            foreach ($data as $item) {
-                if (str_contains(trim(strtolower($item)), trim(strtolower($needle)))) {
-                    $foundMatch;
+            foreach ($data as $key => $value) {
+                if (is_nan(intval($key)) === true && in_array($key, $searchFields) === false) {
+                    continue;
+                }
+
+                $needle = trim(strtolower($needle));
+                $value = trim(strtolower($value));
+                if (str_contains($value, $needle) || $value === $needle) {
+                    $foundMatch = true;
                 }
             }
 
