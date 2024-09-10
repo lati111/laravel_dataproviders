@@ -72,7 +72,7 @@ trait Dataprovider
             $query = $this->applyPaginationToCollection($request, $query);
         }
 
-        return $query->flatten();
+        return $query;
     }
 
     /**
