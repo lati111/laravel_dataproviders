@@ -36,13 +36,13 @@ trait Paginatable
     {
         $this->loadPaginationDetails($request);
 
-        if ($request->get('offset') === null && $request->get('page') === null) {
+        if ($request->get('offset') === null && $request->get('perpage') === null && $request->get('page') === null) {
             return $query;
         }
 
         return $query
-            ->offset($offset ?? 0)
-            ->take($perpage ?? 10);
+            ->offset($this->offset)
+            ->take($this->perPage);
     }
 
     /**
@@ -56,13 +56,13 @@ trait Paginatable
     {
         $this->loadPaginationDetails($request);
 
-        if ($request->get('offset') === null && $request->get('page') === null) {
+        if ($request->get('offset') === null && $request->get('perpage') === null && $request->get('page') === null) {
             return $query;
         }
 
         return $query
-            ->skip($this->offset ?? 0)
-            ->take($this->perPage ?? 10);
+            ->skip($this->offset)
+            ->take($this->perPage);
     }
 
     /**
