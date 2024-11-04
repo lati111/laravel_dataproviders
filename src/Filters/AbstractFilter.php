@@ -67,7 +67,7 @@ abstract class AbstractFilter implements DataproviderFilterInterface
         //add in linked tables missing from main query
         foreach ($links as $link) {
             $exists = false;
-            foreach ($builder->getQuery()->joins as $join) {
+            foreach (($builder->getQuery()->joins ?? []) as $join) {
                 if ($exists) {
                     continue;
                 }
