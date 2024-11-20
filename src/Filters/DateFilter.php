@@ -2,6 +2,8 @@
 
 namespace Lati111\LaravelDataproviders\Filters;
 
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * @class Filter by a standard date
  */
@@ -9,6 +11,13 @@ class DateFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
     protected string $type = 'date';
+
+    /** {@inheritdoc} */
+    protected function addWhereStatement(Builder $builder, string $column, string $operator, mixed $value): Builder {
+        $builder->whereRaw('DATE(?) ? ?', [$column, $operator, $value]);
+
+        return $builder;
+    }
 
     /** {@inheritdoc} */
     protected function getOperators(): array {

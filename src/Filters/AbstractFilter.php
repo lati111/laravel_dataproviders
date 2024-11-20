@@ -103,6 +103,15 @@ abstract class AbstractFilter implements DataproviderFilterInterface
             $column = sprintf('%s.%s', $this->columnTable->getForeignTableName(), $this->column);
         }
 
+        return $this->addWhereStatement($builder, $column, $operator, $value);
+    }
+
+    /**
+     * Add the where statement to the given query
+     * @param Builder $builder The query
+     * @return Builder The modified query
+     */
+    protected function addWhereStatement(Builder $builder, string $column, string $operator, mixed $value): Builder {
         $builder->where($column, $operator, $value);
 
         return $builder;
