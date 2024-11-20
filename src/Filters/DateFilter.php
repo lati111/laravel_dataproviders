@@ -14,9 +14,7 @@ class DateFilter extends AbstractFilter
 
     /** {@inheritdoc} */
     protected function addWhereStatement(Builder $builder, string $column, string $operator, mixed $value): Builder {
-        $builder->whereRaw('DATE(?) ? ?', [$column, $operator, $value]);
-
-        return $builder;
+        return $builder->whereDate($column, $operator, $value);
     }
 
     /** {@inheritdoc} */
