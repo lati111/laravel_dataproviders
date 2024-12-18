@@ -31,6 +31,12 @@ trait Dataprovider
             $query = $this->applyCustomColumnSelects($query);
         }
 
+        // Apply select customization
+        if (in_array(CustomizableSelection::class, $traits)) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $query = $this->applySelectCustomization($request, $query);
+        }
+
         // Apply pagination to a query
         if ($query instanceof Builder && in_array(Paginatable::class, $traits) && $skipPagination === false) {
             /** @noinspection PhpUndefinedMethodInspection */
