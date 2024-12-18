@@ -40,13 +40,15 @@ class CustomColumn
      * @param Builder $builder The query that should be modified
      * @return Builder The modified selector
      */
-    public function applyWhere(Builder $builder, string $operator, string $value): Builder {
+    public function applyWhere(Builder $builder, string $operator, string $value, bool $isOrWhere): Builder {
         $builder = $this->applySelector($builder);
-        return $builder->where(
-            DB::raw(sprintf('(%s)', $this->selectStatement)),
-            $operator,
-            $value
-        );
+        $where = DB::raw(sprintf('(%s)', $this->selectStatement));
+
+        if ($isOrWhere) {
+            return $builder->orWhere($where, $operator, $value);
+        } else {
+            return $builder->where($where, $operator, $value);
+        }
     }
 
     /**

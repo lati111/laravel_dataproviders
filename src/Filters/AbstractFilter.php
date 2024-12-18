@@ -32,6 +32,9 @@ abstract class AbstractFilter implements DataproviderFilterInterface
     /** @var FilterConditionInterface[] $conditions The conditions to be applied the this filter */
     protected array $conditions = [];
 
+    /** @var bool $isOrWhere If the where statement added to the query should be an or where */
+    public bool $isOrWhere = false;
+
     /**
      * Apply the filter to a query
      * @param Model $model The model that served as the base of the options
@@ -112,7 +115,11 @@ abstract class AbstractFilter implements DataproviderFilterInterface
      * @return Builder The modified query
      */
     protected function addWhereStatement(Builder $builder, string $column, string $operator, mixed $value): Builder {
-        $builder->where($column, $operator, $value);
+        if ($this->isOrWhere === false) {
+            $builder->where($column, $operator, $value);
+        } else {
+            $builder->orWhere($column, $operator, $value);
+        }
 
         return $builder;
     }
