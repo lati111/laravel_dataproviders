@@ -37,17 +37,19 @@ trait Filterable
         }
 
         $filterlist = $this->getFilterList();
-        foreach($filters as $filterdata) {
-            if (array_key_exists($filterdata['filter'], $filterlist) === false) {
-                new DataproviderFilterException(sprintf(
-                    'Filter %s does not exist on %s',
-                    $filterdata['filter'],
-                    self::class
-                ), 400);
-            }
+        $builder->where(function($q) use ($filterlist, $filters) {
+            foreach($filters as $filterdata) {
+                if (array_key_exists($filterdata['filter'], $filterlist) === false) {
+                    new DataproviderFilterException(sprintf(
+                        'Filter %s does not exist on %s',
+                        $filterdata['filter'],
+                        self::class
+                    ), 400);
+                }
 
-            $filterlist[$filterdata['filter']]->handle($builder, $filterdata['operator'], $filterdata['value'] ?? '');
-        }
+                $filterlist[$filterdata['filter']]->handle($q, $filterdata['operator'], $filterdata['value'] ?? '');
+            }
+        });
 
         return $builder;
     }
