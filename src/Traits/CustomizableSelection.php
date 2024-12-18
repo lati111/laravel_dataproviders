@@ -25,7 +25,7 @@ trait CustomizableSelection
             new DataproviderFilterException($validator->errors()->first(), 400);
         }
 
-        if ($request->has('columns') === null) {
+        if ($request->get('columns') === null) {
             return $query;
         }
 
