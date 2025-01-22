@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 class DateFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'date';
+    public string $type = 'date';
 
     /** {@inheritdoc} */
     protected function addWhereStatement(Builder $builder, string $column, string $operator, mixed $value): Builder {

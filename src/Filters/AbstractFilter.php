@@ -15,7 +15,7 @@ use Lati111\LaravelDataproviders\Interfaces\DataproviderFilterInterface;
 abstract class AbstractFilter implements DataproviderFilterInterface
 {
     /** @var string $type The string representation of this filter type */
-    protected string $type;
+    public string $type;
 
     /** @var Model $model The model that serves as the base for this operation */
     protected Model $model;

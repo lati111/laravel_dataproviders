@@ -21,7 +21,7 @@ class IsSoftDeletedFilter extends AbstractFilter
     public const ALL_ENTRIES_OPERATOR = 'both';
 
     /** {@inheritdoc} */
-    protected string $type = 'soft_delete';
+    public string $type = 'soft_delete';
 
     /**
      * {@inheritdoc}

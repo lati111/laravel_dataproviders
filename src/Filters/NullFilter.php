@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class NullFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'bool';
+    public string $type = 'bool';
 
     /** {@inheritdoc} */
     protected function getOperators(): array {

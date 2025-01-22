@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class BoolFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'bool';
+    public string $type = 'bool';
 
     /** @var string $operatorTypes The set of operators used for this filter */
     private string $operatorTypes = '';

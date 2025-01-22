@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class IsFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'bool';
+    public string $type = 'bool';
 
     /** @var mixed The value to filter on */
     protected mixed $value;

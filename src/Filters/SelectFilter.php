@@ -8,7 +8,7 @@ namespace Lati111\LaravelDataproviders\Filters;
 class SelectFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'select';
+    public string $type = 'select';
 
     /** {@inheritdoc} */
     protected function getOperators(): array {

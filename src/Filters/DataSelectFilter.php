@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class DataSelectFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'data-select';
+    public string $type = 'data-select';
 
     /**
      * @inheritdoc

@@ -8,7 +8,7 @@ namespace Lati111\LaravelDataproviders\Filters;
 class NumberFilter extends AbstractFilter
 {
     /** {@inheritdoc} */
-    protected string $type = 'number';
+    public string $type = 'number';
 
     /** {@inheritdoc} */
     protected function getOperators(): array {
