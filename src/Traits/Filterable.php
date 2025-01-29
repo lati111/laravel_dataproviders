@@ -37,7 +37,7 @@ trait Filterable
         }
 
         $filterlist = $this->getFilterList();
-        $builder->where(function($q) use ($filterlist, $filters) {
+        $builder->where(function($q) use ($builder, $filterlist, $filters) {
             foreach($filters as $filterdata) {
                 if (array_key_exists($filterdata['filter'], $filterlist) === false) {
                     new DataproviderFilterException(sprintf(
@@ -47,7 +47,8 @@ trait Filterable
                     ), 400);
                 }
 
-                $filterlist[$filterdata['filter']]->handle($q, $filterdata['operator'], $filterdata['value'] ?? '');
+                $filter = $filterlist[$filterdata['filter']];
+                $filter->handle($filter->affectsBaseQuery ? $builder : $q, $filterdata['operator'], $filterdata['value'] ?? '');
             }
         });
 

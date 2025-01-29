@@ -35,6 +35,9 @@ abstract class AbstractFilter implements DataproviderFilterInterface
     /** @var bool $isOrWhere If the where statement added to the query should be an or where */
     public bool $isOrWhere = false;
 
+    /** @var bool Whether or not this filter should be applied to the based query, or the nested query */
+    public bool $affectsBaseQuery = false;
+
     /**
      * Apply the filter to a query
      * @param Model $model The model that served as the base of the options

@@ -29,6 +29,7 @@ class IsSoftDeletedFilter extends AbstractFilter
      */
     public function __construct(Model $model, string|CustomColumn $column, ?ForeignTable $columnTable = null) {
         parent::__construct($model, $column, $columnTable);
+        $this->affectsBaseQuery = true;
     }
 
     /** {@inheritdoc} */
