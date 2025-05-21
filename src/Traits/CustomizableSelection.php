@@ -36,6 +36,9 @@ trait CustomizableSelection
             $show = trim($val[1]) === '1';
 
             $query = $this->setColumnSelection($query, $column, $show);
+            foreach ($this->unions as $union) {
+                $union = $this->setColumnSelection($query, $column, $show);
+            }
         }
 
         return $query;

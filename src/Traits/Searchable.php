@@ -42,6 +42,10 @@ trait Searchable
         }
 
         if ($query instanceof Builder) {
+            foreach ($this->unions as $union) {
+                $this->applySearchToQuery($union, $searchterm, $searchfields);
+            }
+
             return $this->applySearchToQuery($query, $searchterm, $searchfields);
         } else if ($query instanceof Collection) {
             return $this->applySearchToCollection($query, $searchterm, $searchfields);

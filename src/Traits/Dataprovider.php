@@ -14,6 +14,9 @@ trait Dataprovider
     /** @var array An array containing custom columns used in selection */
     protected array $customColumns = [];
 
+    /** @var array An array containing the unions for this statement. */
+    protected array $unions = [];
+
     /**
      * Get the dataprovider content with the selected dataprovider traits applied
      * @param Request $request The request parameters as passed by Laravel
@@ -37,28 +40,34 @@ trait Dataprovider
             $query = $this->applySelectCustomization($request, $query);
         }
 
-        // Apply pagination to a query
-        if ($query instanceof Builder && in_array(Paginatable::class, $traits) && $skipPagination === false) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $query = $this->applyPaginationToQuery($request, $query);
-        }
-
         // Apply a search to a query or collection
         if (in_array(Searchable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
             $query = $this->applySearch($request, $query);
         }
 
-        // Apply the sorting to a query
-        if ($query instanceof Builder && in_array(Sortable::class, $traits) && $dataQuery === true) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $query = $this->applySorting($request, $query);
-        }
-
         // Apply the filters to a query
         if ($query instanceof Builder && in_array(Filterable::class, $traits)) {
             /** @noinspection PhpUndefinedMethodInspection */
             $query = $this->applyFilters($request, $query);
+        }
+
+        // Apply unions
+        $mergedQuery = $query;
+        foreach ($this->unions as $union) {
+            $mergedQuery = $query->union($union);
+        }
+
+        // Apply pagination to a query
+        if ($mergedQuery instanceof Builder && in_array(Paginatable::class, $traits) && $skipPagination === false) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $mergedQuery = $this->applyPaginationToQuery($request, $mergedQuery);
+        }
+
+        // Apply the sorting to a query
+        if ($query instanceof Builder && in_array(Sortable::class, $traits) && $dataQuery === true) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $query = $this->applySorting($request, $query);
         }
 
         return $query;
@@ -87,6 +96,10 @@ trait Dataprovider
     protected function applyCustomColumnSelects(Builder $query): Builder {
         foreach ($this->customColumns as $alias => $sql) {
             $query->selectRaw(sprintf('(%s) as %s', $sql, $alias));
+
+            foreach ($this->unions as $union) {
+                $union->selectRaw(sprintf('(%s) as %s', $sql, $alias));
+            }
         }
 
         return $query;
