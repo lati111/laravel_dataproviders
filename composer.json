@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/http": ">=10.0 <12.0",
-        "illuminate/database": ">=10.0 <12.0"
+        "illuminate/http": ">=10.0",
+        "illuminate/database": ">=10.0"
     }
 }
