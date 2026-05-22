@@ -27,7 +27,12 @@ trait Sortable
             return $builder;
         }
 
-        $sortData = json_decode($request->get('sort'), true);
+        $rawSorts = $request->get('sort', '[]');
+        if ($rawSorts === '[]' || $rawSorts === []) {
+            return $builder;
+        }
+
+        $sortData = is_array($rawSorts) ? $rawSorts : json_decode($rawSorts, true);
         $validator = Validator::make($sortData, [
             ".*" => "required|in:asc,desc",
         ]);
