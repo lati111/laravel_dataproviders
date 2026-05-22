@@ -21,11 +21,12 @@ trait Filterable
      */
     protected function applyFilters(Request $request, Builder $builder): Builder
     {
-        if ($request->get('filters', '[]') === '[]') {
+        $rawFilters = $request->get('filters', '[]');
+        if ($rawFilters === '[]' || $rawFilters === []) {
             return $builder;
         }
 
-        $filters = json_decode($request->get('filters'), true);
+        $filters = is_array($rawFilters) ? $rawFilters : json_decode($rawFilters, true);
         $validator = Validator::make($filters, [
             '*.filter' => 'required|string',
             '*.operator' => 'required|string',
